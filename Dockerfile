@@ -1,4 +1,5 @@
-FROM golang:1.23.3-alpine
+# builder
+FROM golang:1.23.3 AS builder
 
 WORKDIR /app
 
@@ -9,6 +10,13 @@ RUN go mod download
 COPY . .
 
 RUN go build -o main .
+
+# runner
+FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
+
+WORKDIR /app
+
+COPY --from=builder /app/main .
 
 EXPOSE 8080
 

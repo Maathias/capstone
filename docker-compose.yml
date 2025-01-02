@@ -1,0 +1,34 @@
+services:
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    volumes: 
+      - ./data/redis:/data
+  edge:
+    image: capstone:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - REDIS_ADDR=redis:6379
+      - SERVICE=edge
+    ports:
+      - 8080:8080
+      - 8081:2112
+    depends_on:
+      - redis
+  api:
+    image: capstone:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - REDIS_ADDR=redis:6379
+      - SERVICE=api
+    ports:
+      - 8082:8080
+      - 8083:2112
+    depends_on:
+      - redis
