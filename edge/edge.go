@@ -10,6 +10,15 @@ import (
 	"github.com/maathias/capstone/db"
 
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+)
+
+var (
+	metric_updates = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "capstone_loc_updates",
+		Help: "The total number of location update requests",
+	})
 )
 
 func Run() {
@@ -43,6 +52,7 @@ func Run() {
 		db.GeoAdd( "locations", long, lat, uname)
 
 		fmt.Println(uname, long, lat)
+		metric_updates.Inc()
 
 		// TODO: send to api service
 	})

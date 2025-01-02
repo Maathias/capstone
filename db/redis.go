@@ -29,6 +29,7 @@ func Connect(service, addr, pass string) *redis.Client {
 	_, err := rdb.Ping(ctx).Result()
 	if err != nil {
 		fmt.Println("Error connecting to redis")
+		fmt.Println(err)
 		return nil
 	}
 

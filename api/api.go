@@ -5,6 +5,16 @@ import (
 	"time"
 
 	"github.com/maathias/capstone/db"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+)
+
+var (
+	metric_locations = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "capstone_log_location",
+		Help: "The total number of saved location points",
+	})
 )
 
 // save location to db
@@ -15,6 +25,8 @@ func LogLocation(long float64, lat float64, uname string) {
 
 	db.SortedAdd(timeHash, timestamp, fmt.Sprint(timestamp))
 	db.GeoAdd(userHash, long, lat, fmt.Sprint(timestamp))
+
+	metric_locations.Inc()
 }
 
 // get location points in range
